@@ -9,13 +9,9 @@ int socketSetup(int sock, int port_number) {
 
     myaddr.sin_port= htons(port_number);
     myaddr.sin_family = AF_INET;
-    myaddr.sin_addr.s_addr = htonl(INADDR_ANY);
+    myaddr.sin_addr.s_addr = INADDR_ANY;
 
-    if(bind(sock, (struct sockaddr*)&myaddr, sizeof(myaddr))<0) {
-        return -1;
-    }
-
-    return 0;
+    return bind(sock, (struct sockaddr*)&myaddr, sizeof(myaddr));
 }
 
 int parse_argument(int argc, char **argv, int *port_number, char **document_root) {
