@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <netinet/in.h>
 
-int socketSetup(int port_number) {
+int socketSetup(int *sock, int port_number) {
     struct sockaddr_in myaddr;
     int sock;
 
@@ -15,6 +15,8 @@ int socketSetup(int port_number) {
     if(bind(sock, (struct sockaddr*)&myaddr, sizeof(myaddr))<0) {
         return -1;
     }
+
+    printf("Socket is %i", sock);
 
     return 0;
 }
@@ -28,6 +30,7 @@ int parse_argument(int argc, char **argv, int *port_number, char **document_root
   
     // This tells us what flag we are reading and how to interpret the next string
     int flag_type = -1;
+    int args_added = 0;
     
     // Start from 1 because first arg is always the program name
     for(int i = 1; i < argc; i++) {
@@ -41,17 +44,23 @@ int parse_argument(int argc, char **argv, int *port_number, char **document_root
             }
         } else if(flag_type == 1) {
             *port_number = atoi(argv[i]);
-	    printf("Port number is %i\n", *port_number);
-	    if(*port_number > 9999 || *port_number < 8000) {
-	      printf("Invalid port number\n");
-	      return -1;
-	    }
+            args_added++;
+	        if(*port_number > 9999 || *port_number < 8000) {
+	            printf("Invalid port number\n");
+	            return -1;
+	        }
         } else if(flag_type == 2) {
-	    *document_root = argv[i];
+	        *document_root = argv[i];
+            args_added++;
         } else {
             printf("Either an unsupported flag type was entered or there was no flag before a parameter\n");
             return -1;
         }
+    }
+
+    if(args_added != 2) {
+        printf("Not all arguments were read correctly.\n");
+        return -1;
     }
 
     return 0;
@@ -66,9 +75,13 @@ int main(int argc, char **argv) {
         return -1;
     }
 
-    printf("Succes, the port number is %i and the file path is %s\n", port_number, document_root);
+    printf("Success, the port number is %i and the file path is %s\n", port_number, document_root);
 
     int successful_bind = socketSetup(port_number);
+
+    printf("was successful? %i", successful_bind);
+
+    close(port_number);
 
     return 0;
 }
