@@ -11,7 +11,9 @@ int socketSetup(int sock, int port_number) {
     myaddr.sin_family = AF_INET;
     myaddr.sin_addr.s_addr = INADDR_ANY;
 
-    return bind(sock, (struct sockaddr*)&myaddr, sizeof(myaddr));
+    int success = bind(sock, (struct sockaddr*)&myaddr, sizeof(myaddr));
+    perror("Binding Error");
+    return success;
 }
 
 int parse_argument(int argc, char **argv, int *port_number, char **document_root) {
@@ -70,18 +72,10 @@ int main(int argc, char **argv) {
 
     printf("Success, the port number is %i and the file path is %s\n", port_number, document_root);
 
-    int sock = socket(AF_UNIX, SOCK_STREAM, 0);
-    // int successful_bind = socketSetup(sock, port_number);
-
-    struct sockaddr_in myaddr;
-
-    myaddr.sin_port= htons(port_number);
-    myaddr.sin_family = AF_INET;
-    myaddr.sin_addr.s_addr = INADDR_ANY;
-
-    int successful_bind = bind(sock, (struct sockaddr*)&myaddr, sizeof(myaddr));
-
-    printf("was successful? %i with socket number %i\n", successful_bind, sock);
+    int sock = socket(AF_INET, SOCK_STREAM, 0);
+    if(socketSetup(sock, port_number) < 0) {
+        return -1;
+    }
 
     close(sock);
 
