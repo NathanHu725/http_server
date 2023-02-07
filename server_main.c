@@ -7,9 +7,9 @@
 int socketSetup(int sock, int port_number) {
     struct sockaddr_in myaddr;
 
-    myaddr.sin_port= htons(port_number);
+    myaddr.sin_port= htons(8888);
     myaddr.sin_family = AF_INET;
-    myaddr.sin_addr.s_addr = INADDR_ANY;
+    myaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
     return bind(sock, (struct sockaddr*)&myaddr, sizeof(myaddr));
 }
