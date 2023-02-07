@@ -4,9 +4,8 @@
 #include <pthread.h>
 #include <netinet/in.h>
 
-int socketSetup(int port_number) {
+int socketSetup(int sock, int port_number) {
     struct sockaddr_in myaddr;
-    int sock;
 
     myaddr.sin_port= htons(port_number);
     myaddr.sin_family = AF_INET;
@@ -15,8 +14,6 @@ int socketSetup(int port_number) {
     if(bind(sock, (struct sockaddr*)&myaddr, sizeof(myaddr))<0) {
         return -1;
     }
-
-    printf("Socket is %i", sock);
 
     return 0;
 }
@@ -77,11 +74,12 @@ int main(int argc, char **argv) {
 
     printf("Success, the port number is %i and the file path is %s\n", port_number, document_root);
 
-    int successful_bind = socketSetup(port_number);
+    int sock = socket(AF_UNIX, SOCK_STREAM, 0);
+    int successful_bind = socketSetup(sock, port_number);
 
-    printf("was successful? %i", successful_bind);
+    printf("was successful? %i with socket number %i\n", successful_bind, sock);
 
-    close(port_number);
+    close(sock);
 
     return 0;
 }
