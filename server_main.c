@@ -4,7 +4,7 @@
 #include <pthread.h>
 #include <netinet/in.h>
 
-int socketSetup(int *sock, int port_number) {
+int socketSetup(int port_number) {
     struct sockaddr_in myaddr;
     int sock;
 
