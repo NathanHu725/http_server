@@ -7,7 +7,7 @@
 int socketSetup(int sock, int port_number) {
     struct sockaddr_in myaddr;
 
-    myaddr.sin_port= htons(8888);
+    myaddr.sin_port= htons(port_number);
     myaddr.sin_family = AF_INET;
     myaddr.sin_addr.s_addr = htonl(INADDR_ANY);
 
@@ -70,7 +70,7 @@ int main(int argc, char **argv) {
 
     printf("Success, the port number is %i and the file path is %s\n", port_number, document_root);
 
-    int sock = socket(AF_UNIX, SOCK_STREAM, 0);
+    int sock = socket(AF_UNIX, SOCK_STREAM, IPPROTO_TCP);
     int successful_bind = socketSetup(sock, port_number);
 
     printf("was successful? %i with socket number %i\n", successful_bind, sock);
